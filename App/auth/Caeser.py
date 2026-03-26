@@ -114,3 +114,7 @@ def promote_user():
         return jsonify({"msg": "Happy New Admin"})
     except Exception:
         return ({"err" : "somethin went bad"})
+    
+@louis_bp.route("/all", methods=["GET"])
+def all():
+    return jsonify(storage)
