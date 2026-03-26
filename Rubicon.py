@@ -4,11 +4,9 @@ in_logged = []
 
 class User:
     idd = 1
-    def __init__(self, fname,sname, username, email, password, whoIsYou):
+    def __init__(self, username, email, password, whoIsYou):
         self.id = User.idd
         User.idd +=1
-        self.fname = fname
-        self.sname = sname
         self.username = username
         self.email = email
         self.password = password
@@ -18,8 +16,6 @@ class User:
     def to_dict(self):
         return {
             "id": self.id,
-            "fname" : self.fname,
-            "sname" : self.sname,
             "username" : self.username,
             "email" : self.email,
             "password" : self.password,
@@ -34,3 +30,19 @@ class User:
         return  jsonify({
             "msg": "seems like you are not here"
         }), 404
+    
+    @staticmethod
+    def find_by_email(email):
+        for user in storage:
+            if user["email"] == email:
+                return user
+        return None
+        
+Plato = User(
+    username="thegreat",
+    email="admin@1.com",
+    password="4321",
+    whoIsYou="Admin"
+)
+
+storage.append(Plato.to_dict())
