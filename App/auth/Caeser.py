@@ -11,25 +11,36 @@ def register():
         for f in ["fname", "sname", "username", "email", "password"]:
             if f not in ab:
                 return jsonify({"error": f"Missing field: {f}"}), 400
+            
+        default_role = "user"
+        user = User(
+            ab["fname"],
+            ab["sname"],
+            ab["username"],
+            ab["email"],
+            ab["password"],
+            default_role
+        )
+        storage.append(user.to_dict())
+        b2 = user.fname
+
+        return jsonify({"msg": f"Welcome!!  {b2}",
+                       "whoIsYou": default_role 
+                        })
 
     except Exception:
         return jsonify({"err": "Invalid JSON"}), 400
 
-    default_role = "user"
-    user = User(
-        ab["fname"],
-        ab["sname"],
-        ab["username"],
-        ab["email"],
-        ab["password"],
-        default_role
-    )
-    storage.append(user.to_dict())
-
-    return jsonify({f"msg": "Welcome!!", "whoIsYou": default_role,  "user":user.to_dict() })
+    
 def accessibility(user):
     if user["whoIsYou"] =="Admin":
         return "You have full access"
+    if user["whoIsYou"] == "Manager":
+        return "Welcome Manager"
+    if user["whoIsYou"]  == "Sales":
+        return "You need to kill the market"
+    if user["whoIsYou"] == "employee":
+        return "Work hard my friend, you are an employ"
     else:
         return "You are a user"
 
