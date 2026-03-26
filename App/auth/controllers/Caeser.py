@@ -1,5 +1,5 @@
 
-from Rubicon import User, storage, in_logged
+from Julius.App.auth.models.Rubicon import User, storage, in_logged
 from flask import Flask, request, redirect, jsonify, Blueprint
 louis_bp = Blueprint("XIV", __name__)
 @louis_bp.route("/register", methods=["POST"])
