@@ -1,54 +1,22 @@
 from flask import Flask, jsonify
-storage = []
-in_logged = []
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
-class User:
-    idd = 1
-    def __init__(self,fname,sname, username, email, password, whoIsYou):
-        self.id = User.idd
-        User.idd +=1
-        self.fname = fname
-        self.sname = sname
-        self.username = username
-        self.email = email
-        self.password = password
-        self.whoIsYou = whoIsYou
-        
-        
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "fname":self.fname,
-            "sname": self.sname,
-            "username" : self.username,
-            "email" : self.email,
-            "password" : self.password,
-            "whoIsYou" : self.whoIsYou
-        }
-        
-    @staticmethod 
-    def find(email, password):
-        for u in storage:
-            if u["email"] == email and u["password"] == password:
-                return u
-        return  jsonify({
-            "msg": "seems like you are not here"
-        }), 404
+db = SQLAlchemy()
+
+class User(db.Model):
+    id = db.Column(db.integer, primary_key = True)
+    role = db.Column(db.String(), nullable = False)
+    fname = db.Column(db.String(50), unique = True, nullable = False)
+    sname = db.Column(db.Stringt(50), unique = True, nullable = False)
+    username = db.Column(db.String(60), unique = True, nullable = False)
+    email = db.Column(db.String(100), uniques = True, nullable = False)
+    password_damn_hashed = db. Column(db. String(20), nullable = False)
     
-    @staticmethod
-    def find_by_email(email):
-        for user in storage:
-            if user["email"] == email:
-                return user
-        return None
+    
+    def set_damn_password(self, password):
+        self.password_hashed = generate_password_hash(password)
         
-Plato = User(
-    fname="prince",
-    sname="Edward",
-    username="thegreat",
-    email="admin@1.com",
-    password="4321",
-    whoIsYou="Admin"
-)
-
-storage.append(Plato.to_dict())
+        
+    def checking_damn_password(self, password):
+        return check_password_hash(self.password_damn_hashed, password)
