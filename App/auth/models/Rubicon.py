@@ -12,9 +12,13 @@ class User(db.Model):
     sname = db.Column(db.String(50),  nullable = False)
     username = db.Column(db.String(60), unique = True, nullable = False)
     email = db.Column(db.String(100), unique = True, nullable = False)
-    password_damn_hashed = db.Column(db. String(20), nullable = False)
+    password_damn_hashed = db.Column(db. String(120), nullable = False)
     
-    
+    def __init__(self, fname, sname, username, email):
+        self.fname = fname
+        self.sname = sname
+        self.username = username
+        self.email = email 
     def set_damn_password(self, password):
         self.password_damn_hashed = generate_password_hash(password)
         
