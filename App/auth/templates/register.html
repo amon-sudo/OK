@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Register</h1>
+    
+    <form method="POST" action="{{ url_for('auth.regi') }}">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.fname.label }}<br>
+            {{ form.fname(size=32) }}<br>
+            {% for error in form.fname.errors %}
+                <span style="color:red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+        <p>
+            {{ form.sname.label }}<br>
+            {{ form.sname(size=32) }}<br>
+            {% for error in form.sname.errors %}
+                <span style="color:red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+        <p>
+            {{ form.username.label }}<br>
+            {{ form.username(size=32) }}<br>
+            {% for error in form.username.errors %}
+                <span style="color:red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}<br>
+            {% for error in form.email.errors %}
+                <span style="color:red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}<br>
+            {% for error in form.password.errors %}
+                <span style="color:red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+        <p>
+            <input type="submit" value="Register">
+        </p>
+    </form>
+
+    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>.</p>
+</body>
+</html>

@@ -2,10 +2,10 @@ from flask import Blueprint, redirect, url_for, render_template
 from .Caeser import Register, Login
 from auth.models import User, db
 
-amon_bp = Blueprint("auth", __name__)
+amon_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
-@amon_bp.route("/", methods=["POST","GET"])
+@amon_bp.route("/register", methods=["POST","GET"])
 def regi():
     form = Register()
     if form.validate_on_submit():
@@ -25,7 +25,8 @@ def regi():
         db.session.add(newser)
         db.session.commit()
         
-    return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
+    return render_template("register.html", form=form)
     
     
 @amon_bp.route("/login", methods=["POST", "GET"])
@@ -44,4 +45,4 @@ def login():
            else:
                return "inavalid username or password"
            
-    return render_template("login.html", form=form)
+    return render_template("Login.html", form=form)
