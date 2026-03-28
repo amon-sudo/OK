@@ -1,10 +1,13 @@
 from flask import Flask
-from controllers.Caeser import louis_bp
+from controllers.routes import amon_bp
+
 
 app = Flask(__name__)
+app.config['SECRETE_KEY'] = 'amon-admiral-zheng-he'
+app.config['DATABASE_URI'] = 'sqlite:///app.db'
 
 
-app.register_blueprint(louis_bp)
+app.register_blueprint(amon_bp)
 
 
 if __name__ == "__main__":

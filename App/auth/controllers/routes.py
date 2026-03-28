@@ -1,5 +1,5 @@
 from flask import Blueprint, redirect, url_for
-from Caeser import Register
+from .Caeser import Register
 from models import User, db
 
 amon_bp = Blueprint('auth', __name__)
