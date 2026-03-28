@@ -15,7 +15,7 @@ def regi():
         email = form.email.data
         password = form.password.data
         
-        
+        print(form.errors) 
         newser = User(
             fname  = fname, sname = sname, username = username, 
             email = email)
@@ -26,6 +26,8 @@ def regi():
         db.session.commit()
         
         return redirect(url_for('auth.login'))
+    else:
+        print(form.errors)
     return render_template("register.html", form=form)
     
     
@@ -40,7 +42,7 @@ def login():
            
            
            user = User.query.filter_by(email=email).first()
-           if user and user.check_damn_passeord(password):
+           if user and user.check_damn_password(password):
                return "welcom buana. Login succesfully"
            else:
                return "inavalid username or password"
