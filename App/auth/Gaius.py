@@ -1,5 +1,5 @@
 from flask import Flask
-from controllers.routes import amon_bp
+from auth.controllers.routes import amon_bp
 
 
 app = Flask(__name__)
