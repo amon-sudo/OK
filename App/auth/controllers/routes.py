@@ -2,10 +2,10 @@ from flask import Blueprint, redirect, url_for, render_template
 from .Caeser import Register, Login
 from auth.models import User, db
 
-amon_bp = Blueprint('auth', __name__)
+amon_bp = Blueprint( __name__)
 
 
-@amon_bp.route("/", methods=["GET"])
+@amon_bp.route("/", methods=["POST","GET"])
 def regi():
     form = Register()
     if form.validate_on_submit():
@@ -25,10 +25,10 @@ def regi():
         db.session.add(newser)
         db.session.commit()
         
-        return redirect(url_for('login'))
+    return redirect(url_for('login'))
     
     
-@amon_bp.route("/Login")
+@amon_bp.route("/Login", methods=["POST", "GET"])
 def login():
     form = Login()
  

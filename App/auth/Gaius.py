@@ -3,8 +3,8 @@ from auth.controllers.routes import amon_bp
 
 
 app = Flask(__name__)
-app.config['SECRETE_KEY'] = 'amon-admiral-zheng-he'
-app.config['DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SECRET_KEY'] = 'amon-admiral-zheng-he'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 
 
 app.register_blueprint(amon_bp)
