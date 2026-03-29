@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 db = SQLAlchemy()
 
 class User(db.Model):
-    create_at = db.Column(db.DateTime, default=db.func.current_timestampl())
+    create_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     id = db.Column(db.Integer, primary_key = True)
     role = db.Column(db.String(), nullable = False)
     fname = db.Column(db.String(50),  nullable = False)

@@ -54,12 +54,12 @@
         </p>
 
         <p>
-
             {{ form.confirm.label }}<br>
-            {{ form.password(size=32) }}<br>
-            {% for error in form.password.errors %}
+            {{ form.confirm(size=32) }}<br>
+            {% for error in form.confirm.errors %}
                 <span style="color:red;">{{ error }}</span>
             {% endfor %}
+
         </p>
 
        
