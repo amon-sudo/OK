@@ -52,6 +52,15 @@
         </p>
 
         <p>
+
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}<br>
+            {% for error in form.password.errors %}
+                <span style="color:red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+        <p>
             <input type="submit" value="Register">
         </p>
     </form>
