@@ -26,8 +26,7 @@ def regi():
         db.session.commit()
         
         return redirect(url_for('auth.login'))
-    else:
-        print(form.errors)
+    
     return render_template("register.html", form=form)
     
     
