@@ -15,16 +15,25 @@ def regi():
         email = form.email.data
         password = form.password.data
         
+        
+        already_have = User.query.filter(
+            (User.email == email) | (User.username == username)
+        ).first()
+        if already_have:
+            return "User with email or username already exists"
         print(form.errors) 
         newser = User(
             fname  = fname, sname = sname, username = username, 
             email = email)
         newser.set_damn_password(password)
         
+        try:
         
-        db.session.add(newser)
-        db.session.commit()
-        
+            db.session.add(newser)
+            db.session.commit()
+        except InterruptedError:
+            db.session.rollback()
+            return "User exists"
         return redirect(url_for('auth.login'))
     
     return render_template("register.html", form=form)
