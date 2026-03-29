@@ -13,7 +13,7 @@ from wtforms.validators import DataRequired, Email, EqualTo
 class Register(FlaskForm):
     fname = StringField('first name', validators=[DataRequired()])
     sname = StringField('Second name', validators=[DataRequired()])
-    username = StringField('username', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm = StringField('Confirm the password', validators=[DataRequired(), EqualTo('password')])
