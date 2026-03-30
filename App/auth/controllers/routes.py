@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, url_for, render_template
 from .Caeser import Register, Login
-from auth.models import User, db
+from auth.models import db, User
 
 amon_bp = Blueprint("auth", __name__, url_prefix="/auth")
 

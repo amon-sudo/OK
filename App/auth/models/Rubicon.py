@@ -1,8 +1,7 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-
-db = SQLAlchemy()
+from . import db
 
 class User(db.Model):
     create_at = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -24,5 +23,5 @@ class User(db.Model):
         self.password_damn_hashed = generate_password_hash(password)
         
         
-    def checking_damn_password(self, password):
+    def check_damn_password(self, password):
         return check_password_hash(self.password_damn_hashed, password)
