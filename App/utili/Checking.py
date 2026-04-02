@@ -1,4 +1,4 @@
-from Rubicon import db, Role
+from auth.models import db, Role
 
 def role_original ():
     db.create_all()

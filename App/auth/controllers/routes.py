@@ -61,7 +61,8 @@ def create_admin():
     existing = User.query.filter_by(email="hannibal@g.com").first()
     if existing:
         return
-
+    if existing:
+        print("we already have admin")
     admin = User(
         fname="jj",
         sname="yy",
@@ -80,17 +81,22 @@ def create_admin():
 
 @amon_bp.route("/login", methods=["POST"])
 def login():
-    data = request.get_json()
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({"error": "something is wrong"}), 400
 
     email = data.get("email")
     password = data.get("password")
-    session["role"] = user.role.name
+
     if not email or not password:
         return jsonify({"error": "Missing credentials"}), 400
 
     user = User.query.filter_by(email=email).first()
 
     if user and user.check_damn_password(password):
+        session["user_id"] = user.id
+        session["role"] = user.role.name
         return jsonify({
             "message": "Login successful",
             "msg": user.role.name
@@ -103,14 +109,52 @@ def login():
 @who_allowed("admin")
 def users():
     users = User.query.all()
+    return jsonify([
+        {
+            "id": u.id,
+            "username": u.username,
+            "role": u.role.name,
+            "email": u.email
+        }
+        for u in users
+    ])
+
+@amon_bp.route("/promote", methods=["POST"])
+@who_allowed("admin")
+def assign_role():
+    data = request.get_json(silent=True)
+    if not data:
+            return jsonify({"error": "somethings wrong"}), 400
+    email = data.get("email")
+    role_name = data.get("role")
+    if not email or not role_name:
+        return jsonify({"error": "user is recquired and role required"}), 400
+
+    # kucheck user
+    user = user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # kuangalia role
+    role = Role.query.filter_by(name=role_name).first()
+    print("ROLE FOUND:", role)
+    if not role:
+        return jsonify({"error": "Role not found"}), 404
+        
+    # kubadilisha role
+    user.role = role
+
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return jsonify({"error": " error occured somewhwere"}), 500
+
     return jsonify({
-        "id": u.id,
-        "username":u.username,
-        "role" :u.role.name
-    } for u in users)
-
-
-
+        "message": "updated successfully",
+        "user": user.username,
+        "new_role": role.name
+    }), 200
 
 
 

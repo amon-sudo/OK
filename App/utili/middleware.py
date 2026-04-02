@@ -11,16 +11,14 @@ def who_allowed(*allowed_roles):
             user_id = session.get("user_id")
             role = session.get("role")
 
-            # Not logged in
             if not user_id or not role:
                 return jsonify({"error": "Unauthorized"}), 401
 
-            # Verify user still exists
+            
             user = User.query.get(user_id)
             if not user:
                 return jsonify({"error": "User not found"}), 404
 
-            # Check role
             if user.role.name not in allowed_roles:
                 return jsonify({
                     "error": "Forbidden",
