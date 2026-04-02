@@ -1,58 +1,106 @@
-from flask import Blueprint, redirect, url_for, render_template
+from flask import Blueprint, request, jsonify, session
 from .Caeser import Register, Login
-from auth.models import db, User
+from auth.models import db, User, Role
+from utili.middleware import who_allowed
 
 amon_bp = Blueprint("auth", __name__, url_prefix="/auth")
+ad = Role.query.filter_by(name = 'admin').first()
+
+admin = User(
+    fname= "jj",
+    sname=" yy",
+    username= "Hannibal",
+    email= "hannibal@g.com",
+    role=ad
+)
+admin.set_damn_password("0987")
+db.session.add(admin)
+db.commit()
 
 
-@amon_bp.route("/register", methods=["POST","GET"])
-def regi():
-    form = Register()
-    if form.validate_on_submit():
-        fname = form.fname.data
-        sname = form.sname.data
-        username = form.username.data
-        email = form.email.data
-        password = form.password.data
-        
-        
-        already_have = User.query.filter(
-            (User.email == email) | (User.username == username)
-        ).first()
-        if already_have:
-            return "User with email or username already exists"
-        print(form.errors) 
-        newser = User(
-            fname  = fname, sname = sname, username = username, 
-            email = email)
-        newser.set_damn_password(password)
-        
-        try:
-        
-            db.session.add(newser)
-            db.session.commit()
-        except InterruptedError:
-            db.session.rollback()
-            return "User exists"
-        return redirect(url_for('auth.login'))
-    
-    return render_template("register.html", form=form)
-    
-    
-@amon_bp.route("/login", methods=["POST", "GET"])
+print("KK")
+@amon_bp.route("/register", methods=["POST"])
+def register():
+    data = request.get_json()
+
+    fname = data.get("fname")
+    sname = data.get("sname")
+    username = data.get("username")
+    email = data.get("email")
+    password = data.get("password")
+
+    # Check missing fields
+    if not all([fname, sname, username, email, password]):
+        return jsonify({"error": "Missing fields"}), 400
+
+    # Check if user exists
+    existing = User.query.filter(
+        (User.email == email) | (User.username == username)
+    ).first()
+
+    if existing:
+        return jsonify({"error": "User already exists"}), 409
+    role = Role.query.filter_by(name = "user").first()
+    new_user = User(
+        fname=fname,
+        sname=sname,
+        username=username,
+        email=email,
+        role = role
+    )
+    new_user.set_damn_password(password)
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error"}), 500
+
+    return jsonify({"message": "User registered successfully"}), 201
+@amon_bp.route("/login", methods=["POST"])
 def login():
-    form = Login()
- 
-    
-    if form.validate_on_submit():
-           email = form.email.data
-           password = form.password.data
-           
-           
-           user = User.query.filter_by(email=email).first()
-           if user and user.check_damn_password(password):
-               return "welcom buana. Login succesfully"
-           else:
-               return "inavalid username or password"
-           
-    return render_template("Login.html", form=form)
+    data = request.get_json()
+
+    email = data.get("email")
+    password = data.get("password")
+    session["role"] = user.role.name
+    if not email or not password:
+        return jsonify({"error": "Missing credentials"}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if user and user.check_damn_password(password):
+        return jsonify({
+            "message": "Login successful",
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email
+            }
+        }), 200
+
+    return jsonify({"error": "Invalid email or password"}), 401
+
+
+@amon_bp.route("/users", methods=["GET"])
+@who_allowed("admin")
+def users():
+    users = User.query.all()
+    return jsonify({
+        "id": u.id,
+        "username":u.username,
+        "role" :u.role.name
+    } for u in users)
+
+
+
+
+
+
+
+
+@amon_bp.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return jsonify({"message": "Logged out successfully"}), 200
