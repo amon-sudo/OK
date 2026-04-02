@@ -1,15 +1,12 @@
 from Rubicon import db, Role
 
-def role ():
+def role_original ():
     db.create_all()
-    
-    if not Role.query.first():
-        user = Role(name = "user")
-        admin = Role(name = "admin")
-        manager = Role(name = "manager")
-        staff = Role(name = "staff")
+    roles = ["admin", "manager", "user", "hr"]
+    ww = [r.name for r in Role.query.all()]
+    for r in roles:
+        if r not in ww:
+            db.session.add(Role(name = r))
         
-        
-        db.session.add_all([admin, user, manager, staff])
-        db.session.commit()
+    db.session.commit()
     

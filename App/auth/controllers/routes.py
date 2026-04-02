@@ -1,21 +1,8 @@
 from flask import Blueprint, request, jsonify, session
-from .Caeser import Register, Login
 from auth.models import db, User, Role
 from utili.middleware import who_allowed
 
 amon_bp = Blueprint("auth", __name__, url_prefix="/auth")
-ad = Role.query.filter_by(name = 'admin').first()
-
-admin = User(
-    fname= "jj",
-    sname=" yy",
-    username= "Hannibal",
-    email= "hannibal@g.com",
-    role=ad
-)
-admin.set_damn_password("0987")
-db.session.add(admin)
-db.commit()
 
 
 print("KK")
@@ -41,6 +28,8 @@ def register():
     if existing:
         return jsonify({"error": "User already exists"}), 409
     role = Role.query.filter_by(name = "user").first()
+    if not role:
+        return jsonify({"msg": "no role"})
     new_user = User(
         fname=fname,
         sname=sname,
@@ -58,6 +47,37 @@ def register():
         return jsonify({"error": "Database error"}), 500
 
     return jsonify({"message": "User registered successfully"}), 201
+
+
+
+
+def create_admin():
+    admin_role = Role.query.filter_by(name="admin").first()
+
+    if not admin_role:
+        print("Admin role not found!")
+        return
+
+    existing = User.query.filter_by(email="hannibal@g.com").first()
+    if existing:
+        return
+
+    admin = User(
+        fname="jj",
+        sname="yy",
+        username="Hannibal",
+        email="hannibal@g.com",
+        role=admin_role
+    )
+    admin.set_damn_password("0987")
+
+    db.session.add(admin)
+    db.session.commit()
+
+
+
+
+
 @amon_bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -73,11 +93,7 @@ def login():
     if user and user.check_damn_password(password):
         return jsonify({
             "message": "Login successful",
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email
-            }
+            "msg": user.role.name
         }), 200
 
     return jsonify({"error": "Invalid email or password"}), 401

@@ -1,7 +1,7 @@
 from flask import Flask
 from auth.controllers.routes import amon_bp
 from auth.models import  User, db
-
+from auth.models.Checking import role_original
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'amon-admiral-zheng-he'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
@@ -13,5 +13,5 @@ app.register_blueprint(amon_bp)
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        
+        role_original()
     app.run(debug=True)
